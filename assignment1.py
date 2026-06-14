@@ -12,7 +12,8 @@ from langchain.agents import create_tool_calling_agent, AgentExecutor
 def calculate_attendance(total_classes: int, attended_classes: int) -> dict:
     """
     Calculates the attendance percentage and exam eligibility status.
-    Inputs: total_classes (int), attended_classes (int)
+    Inputs: Total Classes, Attended Classes
+    Outputs: Attendance Percentage, Exam Eligibility Status.
     """
     if total_classes <= 0:
         return {"error": "Total classes must be greater than 0."}
@@ -23,8 +24,9 @@ def calculate_attendance(total_classes: int, attended_classes: int) -> dict:
 @tool
 def calculate_result(marks: List[float]) -> dict:
     """
-    Calculates the average marks, grade, and pass/fail status for a student.
-    Input: marks (list of numbers representing marks of 5 subjects)
+    Provided the list of marks of a student in 5 subjects, calculate the grade, average marks and pass/fail status.
+    Inputs: Marks of 5 Subjects
+    Outputs: Average Marks, Grade, Pass/Fail Status
     """
     if not marks:
         return {"error": "Marks list cannot be empty."}
@@ -38,17 +40,25 @@ def calculate_result(marks: List[float]) -> dict:
 
 @tool
 def calculate_fee_balance(total_fee: float, amount_paid: float) -> dict:
-    """Calculates pending course fee. Inputs: total_fee (float), amount_paid (float)"""
+    """Calculates the balance fee remaining from the Inputs given: Total Course Fee and Amount Paid.
+    Inputs: Total Course Fee, Amount Paid
+    Output: Pending Fee Amount"""
     return {"pending_fee_amount": total_fee - amount_paid}
 
 @tool
 def calculate_library_fine(delayed_days: int) -> dict:
-    """Calculates library fine. Input: delayed_days (int)"""
+    """Calculates the library fine based on the number of delayed days.
+    based on the Rule 
+    Rule: Fine = ₹5 * Delayed Days
+    Input: Number of Delayed Days
+    Output: Fine Amount"""
     return {"fine_amount": f"₹{5 * delayed_days}"}
 
 @tool
 def calculate_hostel_fee(monthly_fee: float, months_stayed: int) -> dict:
-    """Calculates total hostel fee. Inputs: monthly_fee (float), months_stayed (int)"""
+    """Calculates the total hostel fee based on the monthly fee and number of months stayed.
+    Inputs: Monthly Hostel Fee, Number of Months
+    Output: Total Hostel Fee"""
     return {"total_hostel_fee": monthly_fee * months_stayed}
 
 @tool
@@ -82,9 +92,11 @@ llm = ChatOllama(
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", (
-        "You are an assistant that has access to local calculator tools. "
-        "When a user asks a question, look at your available tools and select the correct one. "
-        "Always execute the tool matching the user request before writing a final response."
+        "You are a strict, logical assistant with access to calculator tools. "
+        "CRITICAL RULES: "
+        "1. If a user asks a multi-part question, you MUST execute ALL necessary tools one by one before providing any final response to the user. "
+        "2. Do not attempt to calculate anything yourself. Always use the tools. "
+        "3. Only write your final response AFTER you have gathered the observations from every required tool."
     )),
     ("human", "{input}"),
     MessagesPlaceholder(variable_name="agent_scratchpad"),
