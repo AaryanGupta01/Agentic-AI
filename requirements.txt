@@ -8,3 +8,7 @@ chromadb==0.5.18
 langgraph==0.2.28
 sqlalchemy==2.0.36
 langgraph-checkpoint-sqlite==1.0.4
+pyautogen==0.3.2
+rich==13.9.4
+ 
+ 

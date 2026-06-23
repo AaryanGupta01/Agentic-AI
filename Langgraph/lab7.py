@@ -15,7 +15,7 @@ from rich.table import Table
 import json
 import os
 import sqlite3
- 
+
 console = Console()
 llm = ChatOllama(model="qwen2.5:3b", temperature=0.3)
  
